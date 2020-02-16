@@ -11,10 +11,16 @@ import Vapor
 /// BookAvailableResponse
 final class BookAvailableResponse {
     
+    /// Available
     var available: Bool
     
-    init(available: Bool) {
+    /// Book
+    var book: Book
+    
+    /// Create `BookAvailableResponse`
+    init(available: Bool, book: Book) {
         self.available = available
+        self.book = book
     }
 }
 

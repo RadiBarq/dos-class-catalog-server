@@ -45,7 +45,3 @@ extension Book: Migration {}
 
 extension Book: Parameter {}
 
-
-
-
-

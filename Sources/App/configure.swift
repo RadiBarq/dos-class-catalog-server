@@ -7,7 +7,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     try services.register(FluentSQLiteProvider())
     
     // Define Hostname & Port to listen to ...
-    let myServerConfig = NIOServerConfig.default(hostname: "localhost", port: 8090)
+    let myServerConfig = NIOServerConfig.default(hostname: "localhost", port: 8100)
     services.register(myServerConfig)
 
     // Register routes to the router
@@ -35,6 +35,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Category.self, database: .sqlite)
     services.register(migrations)
     
+    // Command Configuration
     var commandConfig = CommandConfig.default()
     commandConfig.useFluentCommands()
     services.register(commandConfig)

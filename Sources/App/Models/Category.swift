@@ -17,7 +17,7 @@ final class Category {
     // Title
     var title: String
  
-    // Creates new 'Category'
+    // Creates new `Category`
     init(id: Int? = nil, title: String) {
         self.id = id
         self.title = title

@@ -8,16 +8,16 @@
 import Foundation
 import Vapor
 
-/// BookAvailableResponse
+/// Book Available Response.
 final class BookAvailableResponse {
     
-    /// Available
+    /// Available.
     var available: Bool
     
-    /// Book
+    /// Book.
     var book: Book
     
-    /// Create `BookAvailableResponse`
+    /// Create `BookAvailableResponse`.
     init(available: Bool, book: Book) {
         self.available = available
         self.book = book

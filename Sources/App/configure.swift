@@ -3,25 +3,25 @@ import Vapor
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-    // Register providers first
+    // Register providers first.
     try services.register(FluentSQLiteProvider())
     
-    // Define Hostname & Port to listen to ...
+    // Define Hostname & Port to listen to.
     let myServerConfig = NIOServerConfig.default(hostname: "localhost", port: 8100)
     services.register(myServerConfig)
 
-    // Register routes to the router
+    // Register routes to the router.
     let router = EngineRouter.default()
     try routes(router)
     services.register(router, as: Router.self)
 
-    // Register middleware
+    // Register middleware.
     var middlewares = MiddlewareConfig() // Create _empty_ middleware config
     // middlewares.use(FileMiddleware.self) // Serves files from `Public/` directory
     middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
     services.register(middlewares)
 
-    // Configure a SQLite database
+    // Configure a SQLite database.
     let sqlite = try SQLiteDatabase(storage: .memory)
 
     // Register the configured SQLite database to the database config.
@@ -29,13 +29,12 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     databases.add(database: sqlite, as: .sqlite)
     services.register(databases)
     
-    // Register migration services and add Book and Category models to the migration
+    // Register migration services.
     var migrations = MigrationConfig()
     migrations.add(model: Book.self, database: .sqlite)
-    migrations.add(model: Category.self, database: .sqlite)
     services.register(migrations)
-    
-    // Command Configuration
+        
+    // Command Configuration.
     var commandConfig = CommandConfig.default()
     commandConfig.useFluentCommands()
     services.register(commandConfig)

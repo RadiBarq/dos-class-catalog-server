@@ -36,7 +36,7 @@ public func routes(_ router: Router) throws {
     router.get("books", Book.parameter) { req -> Future<Book> in
         return try req.parameters.next(Book.self)
     }
-    
+
     /// Registers routes to the update book requests.
     ///
     /// - parameters:
@@ -50,6 +50,18 @@ public func routes(_ router: Router) throws {
             book.price = updtedBook.price
             book.numberOfItems = updtedBook.numberOfItems
             return book.save(on: req)
+        }.flatMap(to: Book.self) { book in
+            let headers: HTTPHeaders = HTTPHeaders([("Content-Type", "application/json")])
+            let request = HTTPRequest(
+                method: .DELETE,
+                url: URL(string: "/invalidateBook/\(String(describing: book.id!))")!,
+                headers: headers
+            )
+            let client = HTTPClient.connect(hostname: "localhost", port: 8020, on: req)
+            _ = client.flatMap(to: HTTPResponse.self) { client in
+                return client.send(request)
+            }
+            return req.future(book)
         }
     }
     
@@ -60,14 +72,26 @@ public func routes(_ router: Router) throws {
     ///     - closure: Creates a `Response` for the incoming `Request`.
     /// - returns: The book after been updated.
     router.put("books", "number-of-items", Book.parameter) {
-          req -> Future<Book> in
-          return try flatMap(to: Book.self, req.parameters.next(Book.self), req.content.decode(Book.self)) {
-              book, updtedBook in
-              book.numberOfItems = updtedBook.numberOfItems
-              return book.save(on: req)
-          }
+        req -> Future<Book> in
+        return try flatMap(to: Book.self, req.parameters.next(Book.self), req.content.decode(Book.self)) {
+            book, updtedBook in
+            book.numberOfItems = updtedBook.numberOfItems
+            return book.save(on: req)
+        }.flatMap(to: Book.self) { book in
+            let headers: HTTPHeaders = HTTPHeaders([("Content-Type", "application/json")])
+            let request = HTTPRequest(
+                method: .DELETE,
+                url: URL(string: "/invalidateBook/\(String(describing: book.id!))")!,
+                headers: headers
+            )
+            let client = HTTPClient.connect(hostname: "localhost", port: 8020, on: req)
+            _ = client.flatMap(to: HTTPResponse.self) { client in
+                return client.send(request)
+            }
+            return req.future(book)
+        }
     }
-    
+
     /// Registers routes to delete the book.
     ///
     /// - parameters:
@@ -90,13 +114,13 @@ public func routes(_ router: Router) throws {
     router.get("books", "search") {
         req -> Future<[Book]> in
         guard let searchCategory = req.query[String.self, at: "category"] else {
-                throw Abort(.badRequest)
+            throw Abort(.badRequest)
         }
         return Book.query(on: req)
             .filter(\.category == searchCategory)
             .all()
     }
-
+    
     /// Registers routes to check if book available or not.
     ///
     /// - parameters:

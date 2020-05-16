@@ -31,7 +31,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     
     // Register migration services.
     var migrations = MigrationConfig()
-    migrations.add(model: Book.self, database: .sqlite)
+    migrations.add(model: Book.self, database: DatabaseIdentifier<Book.Database>.sqlite)
     services.register(migrations)
         
     // Command Configuration.

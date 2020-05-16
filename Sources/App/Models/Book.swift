@@ -36,6 +36,7 @@ final class Book {
     }
 }
 
+
 /// Allows `Book` to be encoded to and decoded from HTTP messages.
 extension Book: Content {}
 
